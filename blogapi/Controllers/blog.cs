@@ -62,9 +62,9 @@ namespace blog.Controllers
         }
 
         [HttpGet("api/blog/list")]
-        public dynamic GetBlogList()
+        public dynamic GetBlogList(string? title, string? writer)
         {
-            DataTable dtDepart = Getblog();
+            DataTable dtDepart = Getblog(title,writer);
             List<blogreq> blogList = new List<blogreq>();
             foreach (DataRow drDepart in dtDepart.Rows)
             {
@@ -83,12 +83,12 @@ namespace blog.Controllers
             }
             return Ok(blogList);
         }
-        private DataTable Getblog()
+        private DataTable Getblog(string title, string writer)
         {
             DataTable dtDepart = new DataTable();
             using (SqlConnection con = new SqlConnection(conqry))
             {
-                string qry = "select * from blog";
+                string qry = "select * from blog where (title like '%" + (string.IsNullOrEmpty(title) ? "" : title) + "%') AND (writer like '%" + (string.IsNullOrEmpty(writer) ? "" : writer) + "%')";
                 using (SqlCommand command = new SqlCommand(qry, con))
                 {
                     SqlDataAdapter adaptor = new SqlDataAdapter(command);
